@@ -11,17 +11,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-
-const helmet = require('helmet');
-app.use(helmet.contentSecurityPolicy({
-  directives: {
-    defaultSrc: ["'self'"],
-    fontSrc: ["'self'", "https://fonts.gstatic.com"],
-    styleSrc: ["'self'", "https://fonts.googleapis.com"],
-    scriptSrc: ["'self'"]
-  }
-}));
-
 app.use((req, res, next) => {
   res.setHeader("Content-Security-Policy", "default-src 'self'; font-src 'self' https://fonts.gstatic.com; style-src 'self' https://fonts.googleapis.com;");
   next();
