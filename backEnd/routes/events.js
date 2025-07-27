@@ -2,10 +2,18 @@ const express = require('express');
 const router = express.Router();
 const Event = require('../models/Event');
 
-// GET - Listar todos os eventos
+
 router.get('/', async (req, res) => {
   try {
-    const events = await Event.find();
+    const { participante } = req.query;
+
+    let filtro = {};
+    if (participante) {
+      filtro.participantes = participante; 
+      // filtro.participantes = { $in: participante.split(',') };
+    }
+
+    const events = await Event.find(filtro);
     res.json(events);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -14,14 +22,16 @@ router.get('/', async (req, res) => {
 
 // POST - Criar um novo evento
 router.post('/', async (req, res) => {
-  const { horaInicio, horaFim, titulo, descricao, participantes } = req.body;
+  const { horaInicio, horaFim, titulo, descricao, participantes, local, dataEvento } = req.body;
 
   const novoEvento = new Event({
     horaInicio,
     horaFim,
     titulo,
     descricao,
-    participantes
+    participantes,
+    local,
+    dataEvento
   });
 
   try {
@@ -42,6 +52,5 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-
-
 module.exports = router;
+
