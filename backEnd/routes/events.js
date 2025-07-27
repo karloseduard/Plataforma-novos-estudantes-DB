@@ -2,18 +2,34 @@ const express = require('express');
 const router = express.Router();
 const Event = require('../models/Event');
 
-
+// GET - Listar todos os eventos ou por query ?participante=Turmas de TI
 router.get('/', async (req, res) => {
   try {
     const { participante } = req.query;
 
     let filtro = {};
     if (participante) {
-      filtro.participantes = participante; 
+      filtro.participantes = participante;
+      // Ou use $in para múltiplos participantes
       // filtro.participantes = { $in: participante.split(',') };
     }
 
     const events = await Event.find(filtro);
+    res.json(events);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// NOVA ROTA - Filtro por participante via URL (ex: /api/events/filtro/Turmas%20de%20TI)
+router.get('/filtro/:participante', async (req, res) => {
+  try {
+    const participante = req.params.participante;
+
+    const events = await Event.find({
+      participantes: participante
+    });
+
     res.json(events);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -53,4 +69,5 @@ router.delete('/:id', async (req, res) => {
 });
 
 module.exports = router;
+
 
